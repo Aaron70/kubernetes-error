@@ -1,0 +1,89 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: server-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: game-controller
+  template:
+    metadata:
+      labels:
+        component: game-controller
+    spec:
+      containers:
+        - name: game-contoller
+          image: aaronv70/c-server
+          ports:
+            - containerPort: 20001
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: client-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: client
+  template:
+    metadata:
+      labels:
+        component: client
+    spec:
+      containers:
+        - name: client
+          image: aaronv70/python-client
+          ports:
+            - containerPort: 20001
+            - containerPort: 5000
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: server-svc
+spec:
+  type: ClusterIP
+  selector: 
+    component: gameController
+  ports:
+    - name: http
+      port: 20001
+      targetPort: 20001
+  
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: client-svc
+spec:
+  type: ClusterIP
+  selector: 
+    component: client 
+  ports:
+    - name: http
+      port: 20001
+      targetPort: 20001
+
+--- 
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: client-svc-ext
+spec:
+  type: NodePort
+  selector:
+    component: client
+  ports:
+    - name: http
+      port: 5000
+      targetPort: 5000
+      nodePort: 30036
+      protocol: TCP

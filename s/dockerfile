@@ -1,0 +1,16 @@
+FROM gcc:12.2.0 as COMPILER
+
+WORKDIR /usr/src/app
+
+COPY . /usr/src/app
+
+RUN gcc server.c -o server
+
+
+FROM archlinux:base
+
+WORKDIR /root/
+
+COPY --from=COMPILER /usr/src/app/server ./
+
+CMD ["./server"]

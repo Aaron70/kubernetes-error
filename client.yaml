@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: client-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: client
+  template:
+    metadata:
+      labels:
+        component: client
+    spec:
+      containers:
+        - name: client
+          image: aaronv70/python-client
+          ports:
+            - containerPort: 20001
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: client-svc-ext
+spec:
+  type: NodePort
+  selector:
+    component: client
+  ports:
+    - name: http
+      port: 5000
+      targetPort: 5000
+      nodePort: 30036
+      protocol: TCP
