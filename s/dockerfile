@@ -13,4 +13,4 @@ WORKDIR /root/
 
 COPY --from=COMPILER /usr/src/app/server ./
 
-CMD ["./server"]
+CMD ["tail","-f","/dev/null"]
